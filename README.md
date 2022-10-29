@@ -24,13 +24,13 @@ func main() {
 	// Setup health checker
 	healthChecker := health.NewChecker(
 		health.WithInterceptors(healthProm.Interceptor), // Use the interceptor to record health metrics
-        // ... checks omitted for brevity
+		// ... checks omitted for brevity
 	)
 
 	// Setup Prometheus
 	registry := prometheus.NewRegistry()
 	registry.MustRegister(healthProm.Collectors()...) // Register the health metric collectors
-    // ... you can register another collectors here (e.g. Go process collector) 
+	// ... you can register another collectors here (e.g. Go process collector) 
 
 	// Setup HTTP server
 	mux := http.NewServeMux()
