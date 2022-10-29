@@ -13,30 +13,50 @@ var healthStatus = []health.AvailabilityStatus{
 	health.StatusUp,
 }
 
-type HealthPrometheus struct {
-	availabilityGauge *prometheus.GaugeVec
+// MetricNameOpts
+// options struct for customizing metric names
+type MetricNameOpts struct {
+	// Name for availability status gauge
+	AvailabilityStatusGauge string
 }
 
-// New
-// create new instance of HealthPrometheus with metricsName
-func New(metricName string) *HealthPrometheus {
+// DefaultMetricNameOpts
+// MetricNameOpts with default values
+var DefaultMetricNameOpts = MetricNameOpts{
+	AvailabilityStatusGauge: "health",
+}
+
+type HealthPrometheus struct {
+	availabilityStatusGauge *prometheus.GaugeVec
+}
+
+// New create new instance of HealthPrometheus
+func New(namespace, subsystem string, nameOpts MetricNameOpts) *HealthPrometheus {
 	return &HealthPrometheus{
-		availabilityGauge: prometheus.NewGaugeVec(
+		availabilityStatusGauge: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: metricName,
-				Help: "Availability status of service identified by name label",
+				Namespace: namespace,
+				Subsystem: subsystem,
+				Name:      nameOpts.AvailabilityStatusGauge,
+				Help:      "Availability status of service identified by name label",
 			},
 			[]string{"name", "status"},
 		),
 	}
 }
 
-// Interceptor
-// implements health.Interceptor that will update underlying metrics as availability status changes
+// New create new instance of HealthPrometheus with default metric names
+func NewDefault(namespace, subsystem string) *HealthPrometheus {
+	return New(namespace, subsystem, DefaultMetricNameOpts)
+}
+
+// Interceptor implements health.Interceptor
+//
+// Will update underlying metrics as availability status changes
 func (m *HealthPrometheus) Interceptor(next health.InterceptorFunc) health.InterceptorFunc {
 	return func(ctx context.Context, name string, state health.CheckState) health.CheckState {
 		for _, s := range healthStatus {
-			mm := m.availabilityGauge.With(prometheus.Labels{
+			mm := m.availabilityStatusGauge.With(prometheus.Labels{
 				"name":   name,
 				"status": string(s),
 			})
@@ -53,9 +73,13 @@ func (m *HealthPrometheus) Interceptor(next health.InterceptorFunc) health.Inter
 }
 
 // Collectors
-// return Prometheus collectors containing health metrics
+// return all Prometheus collectors
 func (m *HealthPrometheus) Collectors() []prometheus.Collector {
 	return []prometheus.Collector{
-		m.availabilityGauge,
+		m.availabilityStatusGauge,
 	}
+}
+
+func (m *HealthPrometheus) AvailabilityStatusCollector() prometheus.Collector {
+	return m.availabilityStatusGauge
 }

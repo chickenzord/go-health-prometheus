@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-	healthProm := healthprometheus.New("myapp_health")
+	healthProm := healthprometheus.NewDefault("", "myapp")
 
 	// Setup health checker
 	healthChecker := health.NewChecker(

@@ -12,10 +12,13 @@ import (
 )
 
 func main() {
-	healthProm := healthprometheus.New("myapp_health")
+	healthProm := healthprometheus.NewDefault("myapp", "service")
 
 	// Setup health checker
 	healthChecker := health.NewChecker(
+		// Use the interceptor to record health metrics globally for all checks
+		health.WithInterceptors(healthProm.Interceptor),
+
 		health.WithCheck(health.Check{
 			Name: "database",
 			Check: func(ctx context.Context) error {
@@ -27,10 +30,9 @@ func main() {
 			Name: "redis",
 			Check: func(ctx context.Context) error {
 				// always down
-				return fmt.Errorf("connection error")
+				return fmt.Errorf("redis connection error")
 			},
 		}),
-		health.WithInterceptors(healthProm.Interceptor), // Use the interceptor to record health metrics
 	)
 
 	// Setup Prometheus
