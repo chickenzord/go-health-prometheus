@@ -2,6 +2,8 @@
 Go library for integrating [alexliesenfeld/health](https://github.com/alexliesenfeld/health) with Prometheus. 
 Implements both Health Interceptor and Prometheus Collector.
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/chickenzord/go-health-prometheus.svg)](https://pkg.go.dev/github.com/chickenzord/go-health-prometheus)
+[![Go Report Card](https://goreportcard.com/badge/github.com/chickenzord/go-health-prometheus)](https://goreportcard.com/report/github.com/chickenzord/go-health-prometheus)
 
 ## Example usage
 
