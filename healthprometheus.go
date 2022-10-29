@@ -24,7 +24,7 @@ func New(metricName string) *HealthPrometheus {
 		availabilityGauge: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: metricName,
-				Help: "Availability status of service identified in name label",
+				Help: "Availability status of service identified by name label",
 			},
 			[]string{"name", "status"},
 		),
