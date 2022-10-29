@@ -1,10 +1,3 @@
-# go-health-prometheus
-Go library for integrating [alexliesenfeld/health](https://github.com/alexliesenfeld/health) with Prometheus
-
-
-## Example usage
-
-```go
 package main
 
 import (
@@ -23,14 +16,26 @@ func main() {
 
 	// Setup health checker
 	healthChecker := health.NewChecker(
+		health.WithCheck(health.Check{
+			Name: "database",
+			Check: func(ctx context.Context) error {
+				// always up
+				return nil
+			},
+		}),
+		health.WithCheck(health.Check{
+			Name: "redis",
+			Check: func(ctx context.Context) error {
+				// always down
+				return fmt.Errorf("connection error")
+			},
+		}),
 		health.WithInterceptors(healthProm.Interceptor), // Use the interceptor to record health metrics
-        // ... checks omitted for brevity
 	)
 
 	// Setup Prometheus
 	registry := prometheus.NewRegistry()
 	registry.MustRegister(healthProm.Collectors()...) // Register the health metric collectors
-    // ... you can register another collectors here (e.g. Go process collector) 
 
 	// Setup HTTP server
 	mux := http.NewServeMux()
@@ -42,18 +47,3 @@ func main() {
 		panic(err)
 	}
 }
-```
-
-See `example` folder for more info on how to use this library.
-
-## Example metrics
-
-```
-myapp_health{name="database" status="up"} 1
-myapp_health{name="database" status="down"} 0
-myapp_health{name="database" status="unknown"} 0
-
-myapp_health{name="redis" status="up"} 0
-myapp_health{name="redis" status="down"} 1
-myapp_health{name="redis" status="unknown"} 0
-```
