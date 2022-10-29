@@ -1,5 +1,6 @@
 # go-health-prometheus
-Go library for integrating [alexliesenfeld/health](https://github.com/alexliesenfeld/health) with Prometheus
+Go library for integrating [alexliesenfeld/health](https://github.com/alexliesenfeld/health) with Prometheus. 
+Implements both Health Interceptor and Prometheus Collector.
 
 
 ## Example usage
