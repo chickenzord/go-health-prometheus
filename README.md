@@ -11,7 +11,6 @@ Implements both Health Interceptor and Prometheus Collector.
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -52,10 +51,12 @@ See `example` folder for more info on how to use this library.
 ## Example metrics
 
 ```
+# database is UP
 myapp_health{name="database" status="up"} 1
 myapp_health{name="database" status="down"} 0
 myapp_health{name="database" status="unknown"} 0
 
+# redis is DOWN
 myapp_health{name="redis" status="up"} 0
 myapp_health{name="redis" status="down"} 1
 myapp_health{name="redis" status="unknown"} 0
