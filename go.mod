@@ -1,4 +1,4 @@
-module github.com/chickenzord/go-health-metrics
+module github.com/chickenzord/go-health-prometheus
 
 go 1.13
 

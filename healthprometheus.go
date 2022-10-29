@@ -1,4 +1,4 @@
-package healthmetrics
+package healthprometheus
 
 import (
 	"context"
@@ -13,17 +13,17 @@ var healthStatus = []health.AvailabilityStatus{
 	health.StatusUp,
 }
 
-type HealthMetrics struct {
-	metrics *prometheus.GaugeVec
+type HealthPrometheus struct {
+	availabilityGauge *prometheus.GaugeVec
 }
 
 // New
 // create new instance of HealthMetrics with metricsName
-func New(metricsName string) *HealthMetrics {
-	return &HealthMetrics{
-		metrics: prometheus.NewGaugeVec(
+func New(metricName string) *HealthPrometheus {
+	return &HealthPrometheus{
+		availabilityGauge: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: metricsName,
+				Name: metricName,
 				Help: "Availability status of service identified in name label",
 			},
 			[]string{"name", "status"},
@@ -31,12 +31,12 @@ func New(metricsName string) *HealthMetrics {
 	}
 }
 
-// HealthInterceptor
-// implements health.HealthInterceptor that will update underlying gauge metrics as availability status changes
-func (m *HealthMetrics) HealthInterceptor(next health.InterceptorFunc) health.InterceptorFunc {
+// Interceptor
+// implements health.Interceptor that will update underlying metrics as availability status changes
+func (m *HealthPrometheus) Interceptor(next health.InterceptorFunc) health.InterceptorFunc {
 	return func(ctx context.Context, name string, state health.CheckState) health.CheckState {
 		for _, s := range healthStatus {
-			mm := m.metrics.With(prometheus.Labels{
+			mm := m.availabilityGauge.With(prometheus.Labels{
 				"name":   name,
 				"status": string(s),
 			})
@@ -52,8 +52,10 @@ func (m *HealthMetrics) HealthInterceptor(next health.InterceptorFunc) health.In
 	}
 }
 
-// PrometheusCollector
-// return Prometheus collector containing gauge health metrics
-func (m *HealthMetrics) PrometheusCollector() prometheus.Collector {
-	return m.metrics
+// Collectors
+// return Prometheus collectors containing health metrics
+func (m *HealthPrometheus) Collectors() []prometheus.Collector {
+	return []prometheus.Collector{
+		m.availabilityGauge,
+	}
 }
