@@ -18,7 +18,7 @@ type HealthPrometheus struct {
 }
 
 // New
-// create new instance of HealthMetrics with metricsName
+// create new instance of HealthPrometheus with metricsName
 func New(metricName string) *HealthPrometheus {
 	return &HealthPrometheus{
 		availabilityGauge: prometheus.NewGaugeVec(
