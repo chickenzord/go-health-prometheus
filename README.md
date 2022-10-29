@@ -5,6 +5,12 @@ Implements both Health Interceptor and Prometheus Collector.
 [![Go Reference](https://pkg.go.dev/badge/github.com/chickenzord/go-health-prometheus.svg)](https://pkg.go.dev/github.com/chickenzord/go-health-prometheus)
 [![Go Report Card](https://goreportcard.com/badge/github.com/chickenzord/go-health-prometheus)](https://goreportcard.com/report/github.com/chickenzord/go-health-prometheus)
 
+## Module installation
+
+```sh
+go get github.com/chickenzord/go-health-prometheus
+```
+
 ## Example usage
 
 ```go
